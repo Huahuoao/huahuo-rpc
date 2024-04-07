@@ -1,15 +1,15 @@
 package com.huahuo.rpc.server.impl;
 
+import com.huahuo.rpc.RpcApplication;
 import com.huahuo.rpc.model.RpcRequest;
 import com.huahuo.rpc.model.RpcResponse;
 import com.huahuo.rpc.registry.LocalRegistry;
-import com.huahuo.rpc.serializer.impl.JdkSerializer;
+import com.huahuo.rpc.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import com.huahuo.rpc.serializer.Serializer;
 import io.vertx.core.http.HttpServerResponse;
-import lombok.extern.slf4j.Slf4j;
 
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class HttpServerHandle implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest request) {
         //选择序列化器
-        final Serializer serializer = new JdkSerializer();
+        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
         System.out.println("Received request: " + request.method()+" "+request.uri());
         request.bodyHandler(body -> {
             //序列化请求体

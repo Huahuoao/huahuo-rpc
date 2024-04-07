@@ -1,0 +1,2 @@
+jdk=com.huahuo.rpc.serializer.impl.JdkSerializer
+fastjson=com.huahuo.rpc.serializer.impl.FastjsonSerializer
