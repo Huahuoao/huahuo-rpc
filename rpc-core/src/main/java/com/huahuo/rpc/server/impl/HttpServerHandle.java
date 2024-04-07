@@ -24,7 +24,7 @@ public class HttpServerHandle implements Handler<HttpServerRequest> {
     public void handle(HttpServerRequest request) {
         //选择序列化器
         final Serializer serializer = new JdkSerializer();
-        System.out.println("Received request: " + request.method() + " " + request.uri());
+        System.out.println("Received request: " + request.method()+" "+request.uri());
         request.bodyHandler(body -> {
             //序列化请求体
             byte[] bytes = body.getBytes();
