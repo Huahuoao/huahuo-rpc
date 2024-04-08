@@ -2,6 +2,9 @@ package com.huahuo.rpc.service;
 
 import com.huahuo.rpc.model.User;
 
+import java.net.UnknownHostException;
+import java.util.Map;
+
 public interface UserService {
-   String getUser(User user);
+   Map<String,String> getUser(User user) throws UnknownHostException;
 }

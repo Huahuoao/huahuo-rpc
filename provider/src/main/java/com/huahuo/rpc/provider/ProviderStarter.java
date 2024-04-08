@@ -26,7 +26,7 @@ public class ProviderStarter {
       serviceMetaInfo.setServiceAddress(rpcConfig.getServerHost() + ":" + rpcConfig.getServerPort());
       try {
         registry.register(serviceMetaInfo);
-        System.out.println("注册服务成功！");
+        System.out.println("成功注册服务： "+serviceName + " 到注册中心");
       } catch (Exception e) {
         e.printStackTrace();
         log.error("register service error", e);
