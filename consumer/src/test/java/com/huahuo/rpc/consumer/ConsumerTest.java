@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ConsumerTest {
   @Test
-  public void testConsumer() throws UnknownHostException {
+  public void testConsumer(){
     UserService userService = ServiceProxyFactory.getProxy(UserService.class);
     Map<String, String> map = userService.getUser(new User("花火"));
     System.out.println(map);

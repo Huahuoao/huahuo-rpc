@@ -1,13 +1,10 @@
 package com.huahuo.rpc.serializer;
 
-import com.huahuo.rpc.serializer.Serializer;
-import com.huahuo.rpc.serializer.impl.FastjsonSerializer;
+
 import com.huahuo.rpc.serializer.impl.JdkSerializer;
-import com.huahuo.rpc.server.SerializerKeys;
 import com.huahuo.rpc.spi.SpiLoader;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class SerializerFactory {
   static {

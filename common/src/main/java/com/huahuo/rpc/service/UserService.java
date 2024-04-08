@@ -6,5 +6,5 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 public interface UserService {
-   Map<String,String> getUser(User user) throws UnknownHostException;
+   Map<String,String> getUser(User user);
 }

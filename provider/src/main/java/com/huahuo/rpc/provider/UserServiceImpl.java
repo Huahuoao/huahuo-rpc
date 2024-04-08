@@ -14,18 +14,23 @@ import java.util.Map;
 
 public class UserServiceImpl implements UserService {
     @Override
-    public Map<String, String> getUser(User user) throws UnknownHostException {
-      InetAddress localHost = InetAddress.getLocalHost();
-      String localIpAddress = localHost.getHostAddress();
-      Map<String, String> map = new HashMap<>();
-      RpcConfig rpcConfig = RpcApplication.getRpcConfig();
-      RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
-      user.setName(user.getName() + "啦啦啦");
-      map.put("处理后用户名", user.getName());
-      map.put("调用时间", DateUtil.now());
-      map.put("处理方法", UserServiceImpl.class.getName());
-      map.put("注册中心地址", registryConfig.getAddress());
-      map.put("服务提供方地址", localIpAddress + ":" + rpcConfig.getServerPort());
-      return map;
+    public Map<String, String> getUser(User user) {
+      try {
+        InetAddress localHost = InetAddress.getLocalHost();
+        String localIpAddress = localHost.getHostAddress();
+        Map<String, String> map = new HashMap<>();
+        RpcConfig rpcConfig = RpcApplication.getRpcConfig();
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        user.setName(user.getName() + "啦啦啦");
+        map.put("处理后用户名", user.getName());
+        map.put("调用时间", DateUtil.now());
+        map.put("处理方法", UserServiceImpl.class.getName());
+        map.put("注册中心地址", registryConfig.getAddress());
+        map.put("服务提供方地址", localIpAddress + ":" + rpcConfig.getServerPort());
+        return map;
+      } catch (UnknownHostException e) {
+        e.printStackTrace();
+      }
+      return null;
     }
 }
