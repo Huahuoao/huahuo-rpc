@@ -21,7 +21,7 @@ public class SpiLoader {
   private static Map<String, Map<String, Class<?>>> loaderMap = new ConcurrentHashMap<>();
   private static Map<String, Object> instanceCache = new ConcurrentHashMap<>();
 
-  private static final String RPC_DIR = "MATA-INF/rpc";
+  private static final String RPC_DIR = "META-INF/rpc/";
   private static final List<Class<?>> LOAD_CLASS_LIST = Arrays.asList(Serializer.class);
 
   public static void loadAll() {
@@ -33,7 +33,8 @@ public class SpiLoader {
 public static <T> T getInstance(Class<?> tClass,String key){
     String tClassName = tClass.getName();
     Map<String,Class<?>> keyClassMap = loaderMap.get(tClassName);
-    if (keyClassMap == null){
+  System.out.println(keyClassMap);
+  if (keyClassMap == null){
       throw new RuntimeException(String.format("SpiLoader 未加载 %s 类型",tClassName));
     }
     if (!keyClassMap.containsKey(key)){
@@ -55,8 +56,11 @@ public static <T> T getInstance(Class<?> tClass,String key){
   public static Map<String, Class<?>> load(Class<?> loadClass) {
     log.info("加载类型为{}的SPI", loadClass.getName());
     Map<String, Class<?>> keyClassMap = new HashMap<>();
-    List<URL> resources = ResourceUtil.getResources(RPC_DIR + loadClass.getName());
+    List<URL> resources = ResourceUtil.getResources(RPC_DIR+loadClass.getName());
+    log.info("SPI资源文件路径：{}", RPC_DIR+loadClass.getName());
+    log.info("SPI资源文件数量：{}", resources.size());
     for (URL resource : resources) {
+      log.info("加载SPI资源文件：{}", resource.toString());
       try {
         InputStreamReader inputStreamReader = new InputStreamReader(resource.openStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);

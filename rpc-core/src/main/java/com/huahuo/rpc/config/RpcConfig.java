@@ -10,4 +10,5 @@ public class RpcConfig {
     private String serverHost = "localhost";
     private Integer serverPort = 8080;
     private String serializer = SerializerKeys.JDK;
+    private RegistryConfig registryConfig = new RegistryConfig();
 }

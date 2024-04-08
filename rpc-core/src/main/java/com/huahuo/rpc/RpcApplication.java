@@ -1,12 +1,13 @@
 package com.huahuo.rpc;
 
 
+import com.huahuo.rpc.config.RegistryConfig;
 import com.huahuo.rpc.config.RpcConfig;
 import com.huahuo.rpc.constant.RpcConstant;
+import com.huahuo.rpc.registry.RegistryFactory;
+import com.huahuo.rpc.registry.remote.Registry;
 import com.huahuo.rpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
-
-import java.rmi.registry.Registry;
 
 /**
  * RPC 框架应用
@@ -20,6 +21,10 @@ public class RpcApplication {
     public static void init(RpcConfig newRpcConfig) {
         rpcConfig = newRpcConfig;
         log.info("rpc init,config = {}", newRpcConfig.toString());
+      RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+      Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+      registry.init(registryConfig);
+      log.info("registry init,config = {}", registryConfig);
     }
 
     public static void init() {

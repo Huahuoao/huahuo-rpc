@@ -3,7 +3,7 @@ package com.huahuo.rpc.server.impl;
 import com.huahuo.rpc.RpcApplication;
 import com.huahuo.rpc.model.RpcRequest;
 import com.huahuo.rpc.model.RpcResponse;
-import com.huahuo.rpc.registry.LocalRegistry;
+import com.huahuo.rpc.registry.local.LocalRegistry;
 import com.huahuo.rpc.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;

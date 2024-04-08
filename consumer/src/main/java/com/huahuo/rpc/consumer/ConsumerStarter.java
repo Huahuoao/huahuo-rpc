@@ -8,9 +8,9 @@ import com.huahuo.rpc.utils.ConfigUtils;
 
 public class ConsumerStarter {
     public static void main(String[] args) {
+      RpcConfig rpcConfig = ConfigUtils.loadConfig(RpcConfig.class,"rpc");
        UserService userService = ServiceProxyFactory.getProxy(UserService.class);
-       System.out.println(userService.getUser(new User("花火")));
-        RpcConfig rpcConfig = ConfigUtils.loadConfig(RpcConfig.class,"rpc");
-        System.out.println(rpcConfig);
+        System.out.println(userService.getUser(new User("花火")));
+
     }
 }

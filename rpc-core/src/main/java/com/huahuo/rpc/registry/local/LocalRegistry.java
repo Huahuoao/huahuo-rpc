@@ -1,4 +1,4 @@
-package com.huahuo.rpc.registry;
+package com.huahuo.rpc.registry.local;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
