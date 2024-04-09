@@ -15,7 +15,7 @@ public class EtcdTest {
   @Before
   public void init() {
     RegistryConfig registryConfig = new RegistryConfig();
-    registryConfig.setAddress("http://10.0.8.12:2379");
+    registryConfig.setAddress("http://81.71.2.123:2379");
     registry.init(registryConfig);
   }
 

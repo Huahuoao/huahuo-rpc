@@ -12,8 +12,13 @@ import java.util.Map;
 public class ConsumerTest {
   @Test
   public void testConsumer(){
-    UserService userService = ServiceProxyFactory.getProxy(UserService.class);
-    Map<String, String> map = userService.getUser(new User("花火"));
-    System.out.println(map);
+    for (int i = 0; i < 10; i++) {
+      UserService userService = ServiceProxyFactory.getProxy(UserService.class);
+      Map<String, String> map = userService.getUser(new User("花火"));
+      System.out.println("====================result"+i+"====================");
+      System.out.println(map);
+      System.out.println("===================="+i+"====================");
+    }
+
   }
 }

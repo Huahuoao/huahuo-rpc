@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="huahuo-rpc:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/huahuo_rpc_jar</output-path>
+    <root id="archive" name="huahuo-rpc.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/provider/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
