@@ -12,7 +12,6 @@ import com.huahuo.rpc.server.impl.VertxHttpServer;
 import com.huahuo.rpc.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetAddress;
 
 @Slf4j
 public class ProviderStarter {
