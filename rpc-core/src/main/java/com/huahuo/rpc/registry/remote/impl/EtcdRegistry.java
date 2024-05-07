@@ -1,14 +1,17 @@
 package com.huahuo.rpc.registry.remote.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ConcurrentHashSet;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.json.JSONUtil;
 import com.huahuo.rpc.config.RegistryConfig;
 import com.huahuo.rpc.model.ServiceMetaInfo;
+import com.huahuo.rpc.registry.RegistryServiceCache;
 import com.huahuo.rpc.registry.remote.Registry;
 import io.etcd.jetcd.*;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
+import io.etcd.jetcd.watch.WatchEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -28,13 +31,15 @@ public class EtcdRegistry implements Registry {
     private KV kvClient;  // KV客户端，用于键值对操作
     private static final String ETCD_ROOT_PATH = "/rpc/";  // Etcd根路径
     private final Set<String> localRegisterNodeKeySet = new HashSet<>(); //本地注册节点的key集合
+    private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();  // 服务缓存
+    private final Set<String> watchKeySet = new ConcurrentHashSet<>();  // 监听的key集合
 
     @Override
     // 初始化EtcdRegistry，根据RegistryConfig创建Etcd客户端和KV客户端
     public void init(RegistryConfig registryConfig) {
         client = Client.builder().endpoints(registryConfig.getAddress()).connectTimeout(Duration.ofMillis(registryConfig.getTimeout())).build();
         kvClient = client.getKVClient();
-        heartBeat(); // 启动心跳检测机制
+      heartBeat(); // 启动心跳检测机制
     }
 
     @Override
@@ -74,14 +79,23 @@ public class EtcdRegistry implements Registry {
     @Override
     // 根据serviceKey在Etcd中进行服务发现，返回服务列表
     public List<ServiceMetaInfo> serviceDiscovery(String serviceKey) {
+        List<ServiceMetaInfo> cachedServiceMetaInfoList = registryServiceCache.readCache(); // 从缓存中获取服务列表
+        if (cachedServiceMetaInfoList != null) {
+            System.out.println("从缓存中获取服务列表");
+            return cachedServiceMetaInfoList;
+        }
         String searchPrefix = ETCD_ROOT_PATH + serviceKey + "/";  // 搜索前缀
         try {
             GetOption getOption = GetOption.builder().isPrefix(true).build();
             List<KeyValue> keyValues = kvClient.get(ByteSequence.from(searchPrefix, StandardCharsets.UTF_8), getOption).get().getKvs();  // 获取键值对列表
-            return keyValues.stream().map(keyValue -> {
+            List<ServiceMetaInfo> collect = keyValues.stream().map(keyValue -> {
                 String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
+                watch(value);
                 return JSONUtil.toBean(value, ServiceMetaInfo.class);
-            }).collect(Collectors.toList());  // 将键值对转换为ServiceMetaInfo对象列表
+            }).collect(Collectors.toList());
+            registryServiceCache.writeCache(collect);
+            return collect;
+
         } catch (Exception e) {
             throw new RuntimeException("获取服务列表失败", e);  // 抛出异常
         }
@@ -90,7 +104,14 @@ public class EtcdRegistry implements Registry {
     @Override
     // 销毁EtcdRegistry，关闭客户端连接
     public void destroy() {
-        System.out.println("当前节点下线");  // 输出信息
+        System.out.println("调用destroy() 方法 当前节点下线");  // 输出信息
+        for (String key : localRegisterNodeKeySet) {
+            try {
+                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8));  // 删除服务信息
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         if (kvClient != null) {
             kvClient.close();  // 关闭KV客户端
         }
@@ -128,6 +149,26 @@ public class EtcdRegistry implements Registry {
                 }
             }
         }, 0, 5, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void watch(String serviceNodeKey) {
+        Watch watchClient = client.getWatchClient();
+        boolean newWatch = watchKeySet.add(serviceNodeKey);
+        if (newWatch) {
+            watchClient.watch(ByteSequence.from(serviceNodeKey, StandardCharsets.UTF_8), response -> {
+                for (WatchEvent event : response.getEvents()) {
+                    switch (event.getEventType()) {
+                        case DELETE:
+                            registryServiceCache.clearCache();
+                            break;
+                        case PUT:
+                        default:
+                            break;
+                    }
+                }
+            });
+        }
     }
 
 }

@@ -16,3 +16,4 @@ public class FastjsonSerializer implements Serializer {
         return JSON.parseObject(bytes, type);
     }
 }
+

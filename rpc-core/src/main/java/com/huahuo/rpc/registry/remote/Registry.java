@@ -21,4 +21,6 @@ public interface Registry {
   void destroy();
   // 心跳检测
   void heartBeat();
+  //服务监听key
+  void watch(String serviceNodeKey);
 }
